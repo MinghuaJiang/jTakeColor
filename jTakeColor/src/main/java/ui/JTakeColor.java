@@ -5,50 +5,45 @@ import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import action.ExitAction;
+import action.AboutAction;
 import action.HotAction;
 
 public class JTakeColor extends ApplicationWindow {
-	private ExitAction exitAction;
-	private HotAction hotAction;
-	private ShellManager shellManager;
 
 	public JTakeColor() {
 		super(null);
-		exitAction = new ExitAction();
-		hotAction = new HotAction();
-		shellManager = new ShellManager();
 		addMenuBar();
-		
 	}
 
 	public void run() {
-		// Don't return from open() until window closes
 		setBlockOnOpen(true);
-		// Open the main window
 		open();
-		// Dispose the display
 		Display.getCurrent().dispose();
 	}
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		// Set the title bar text
+		shell.setBounds(100, 100, 400, 350);
+		shell.setText("JTakeColor");	
+		ShellManager shellManager = new ShellManager();
 		shellManager.configureShell(shell);
 	}
 
 	protected MenuManager createMenuManager() {
 		MenuManager mm = new MenuManager();
-		MenuManager setMenu = new MenuManager("…Ë÷√");
-		MenuManager aboutMenu = new MenuManager("πÿ”⁄");
+		MenuManager setMenu = new MenuManager("Settings");
+		MenuManager aboutMenu = new MenuManager("About");
 		mm.add(setMenu);
 		mm.add(aboutMenu);
-		setMenu.add(hotAction);
-		setMenu.add(exitAction);
+		setMenu.add(new HotAction());
+		aboutMenu.add(new AboutAction());
 
 		return mm;
 	}
 
+	protected boolean showTopSeperator() {
+		return false;
+	}
 	public static void main(String[] args) {
 		new JTakeColor().run();
 	}
