@@ -1,9 +1,8 @@
 package action;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.SWT;
 
-import dialog.AboutDialog;
+import org.eclipse.swt.SWT;
 
 public class AboutAction extends Action {
 	public AboutAction() {
@@ -14,6 +13,6 @@ public class AboutAction extends Action {
 	}
 
 	public void run() {
-		AboutDialog.showAboutMessageBox();
+		//AboutDialog.showAboutMessageBox();
 	}
 }

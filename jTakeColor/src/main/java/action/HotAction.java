@@ -13,6 +13,6 @@ public class HotAction extends Action {
 	}
 
 	public void run() {
-		MyPreference.showPreference();
+		Preference.showPreference();
 	}
 }
