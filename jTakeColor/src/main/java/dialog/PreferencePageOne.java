@@ -8,10 +8,11 @@ public class PreferencePageOne extends FieldEditorPreferencePage {
 	@Override
 	protected void createFieldEditors() {
 		// TODO Auto-generated method stub
-		StringFieldEditor sfe = new StringFieldEditor("hotkey", "ÈÈ¼ü",
+		StringFieldEditor sfe = new StringFieldEditor("hotkey", "Hot Key",
 				getFieldEditorParent());
 		addField(sfe);
 
 	}
 
 }
+
