@@ -1,26 +1,18 @@
 package ui;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.image.BufferedImage;
+import java.util.Arrays;
+
+import model.CaptureType;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -35,245 +27,36 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 
-import util.CaptureImageUtil;
+import ui.composite.CaptureComposite;
+import ui.composite.ColorComposite;
+import ui.composite.CopyComposite;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 public class ShellManager {
-	private Shell subshell;
+	private Composite currentComposite;
+	private int count;
+	private ColorComposite colorComposite;
+	private CaptureComposite captureComposite;
+	private CopyComposite copyComposite;
+	
 	public void configureShell(Shell shell) {
-		Display display = shell.getDisplay();
-		shell.setBounds(0, 0, display.getBounds().width,
-				display.getBounds().width);
-		shell.setAlpha(1);
-		subshell = new Shell(shell, SWT.CLOSE | SWT.MAX | SWT.MIN);
-		subshell.setText("JTakeColor");
-		subshell.setLocation(100, 100);	
-		createContent(subshell);
+		createContent(shell);
 	}
 	
-	private void createContent(Shell parent){
-		final Display display = parent.getDisplay();
-		parent.setLayout(new GridLayout(3, false));
-		// canvas = new Canvas(parent,SWT.NONE);
-		// canvas.setVisible(false);
-		Composite backComposite = new Composite(parent, SWT.None);
-		GridData gd = new GridData();
-		// gd.minimumWidth = 100;
-		gd.widthHint = 100;
-		gd.heightHint = 200;
-		backComposite.setLayoutData(gd);
-		backComposite.setLayout(new FormLayout());
-		FormData fd = new FormData();
-		fd.left = new FormAttachment(0, 10);
-		fd.right = new FormAttachment(100, -10);
-		fd.top = new FormAttachment(0, 10);
-		fd.bottom = new FormAttachment(50, -10);
-		final Label colorLabel = new Label(backComposite, SWT.NONE);
-		// colorLabel.setText("sss");
-		colorLabel.setLayoutData(fd);
-		colorLabel.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				// Do some drawing
-				Label capture = (Label) e.widget;
-				// e.gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
-				// e.gc.drawLine(0, capture.getSize().y/2,
-				// capture.getSize().x,capture.getSize().y/2);
-				// e.gc.drawLine(capture.getSize().x/2, 0,
-				// capture.getSize().x/2, capture.getSize().y);
-				// e.gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-				e.gc.drawRectangle(0, 0, capture.getSize().x - 1, capture
-						.getSize().y - 1);
-			}
-		});
-		final Label positionLabel = new Label(backComposite, SWT.NONE);
-		fd = new FormData();
-		fd.left = new FormAttachment(0, 10);
-		fd.right = new FormAttachment(100, -10);
-		fd.top = new FormAttachment(colorLabel, 10);
-
-		positionLabel.setLayoutData(fd);
-		final Label colorText = new Label(backComposite, SWT.NONE);
-		fd = new FormData();
-		fd.left = new FormAttachment(0, 10);
-		fd.right = new FormAttachment(100, -10);
-		fd.top = new FormAttachment(positionLabel, 15);
-		fd.bottom = new FormAttachment(80, -10);
-		colorText.setLayoutData(fd);
-		Combo combo = new Combo(backComposite, SWT.READ_ONLY);
-		fd = new FormData();
-		fd.left = new FormAttachment(0, 10);
-		fd.right = new FormAttachment(100, -10);
-		fd.top = new FormAttachment(colorText, 10);
-		fd.bottom = new FormAttachment(100, -10);
-		combo.setLayoutData(fd);
-		combo.setItems(Mode.items);
-		combo.select(0);
-
-		// parent.layout();
-		Composite captureComposite = new Composite(parent, SWT.None);
-		gd = new GridData();
-		// gd.minimumWidth = 100;
-		gd.heightHint = 200;
-		gd.widthHint = 150;
-		captureComposite.setLayoutData(gd);
-		captureComposite.setLayout(new FormLayout());
-		fd = new FormData();
-		fd.left = new FormAttachment(0, 10);
-		fd.right = new FormAttachment(100, -10);
-		fd.top = new FormAttachment(0, 10);
-		fd.bottom = new FormAttachment(80, -10);
-
-		Label captureLabel = new Label(captureComposite, SWT.NONE);
-		captureLabel.setLayoutData(fd);
-		captureLabel.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				// Do some drawing
-				Label capture = (Label) e.widget;
-				e.gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
-				e.gc.drawLine(0, capture.getSize().y / 2, capture.getSize().x,
-						capture.getSize().y / 2);
-				e.gc.drawLine(capture.getSize().x / 2, 0,
-						capture.getSize().x / 2, capture.getSize().y);
-				e.gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-				e.gc.drawRectangle(0, 0, capture.getSize().x - 1, capture
-						.getSize().y - 1);
-			}
-		});
-		final Text captureText = new Text(captureComposite, SWT.BORDER
-				| SWT.SINGLE);
-		fd = new FormData();
-		fd.left = new FormAttachment(0, 10);
-		fd.right = new FormAttachment(100, -10);
-		fd.top = new FormAttachment(captureLabel, 10);
-		fd.bottom = new FormAttachment(100, -10);
-		captureText.setLayoutData(fd);
-
-		Composite copyComposite = new Composite(parent, SWT.None);
-		gd = new GridData();
-		// gd.minimumWidth = 100;
-		gd.heightHint = 200;
-		gd.widthHint = 115;
-		copyComposite.setLayoutData(gd);
-		copyComposite.setLayout(new FormLayout());
-		fd = new FormData();
-		fd.left = new FormAttachment(0, 10);
-		fd.right = new FormAttachment(100, -10);
-		fd.top = new FormAttachment(0, 10);
-		fd.bottom = new FormAttachment(80, -10);
-		final List list = new List(copyComposite, SWT.MULTI | SWT.V_SCROLL
-				| SWT.BORDER);
-		list.setLayoutData(fd);
-		Button chooser = new Button(copyComposite, SWT.PUSH);
-		chooser.setText("µ÷É«°å");
-		fd = new FormData();
-		fd.right = new FormAttachment(100, -10);
-		fd.top = new FormAttachment(list, 10);
-		fd.bottom = new FormAttachment(100, -10);
-		chooser.setLayoutData(fd);
-
-		Button copy = new Button(copyComposite, SWT.PUSH);
-		copy.setText("¸´ÖÆ");
-		fd = new FormData();
-		fd.left = new FormAttachment(0, 10);
-		fd.right = new FormAttachment(chooser, -10);
-		fd.top = new FormAttachment(list, 10);
-		fd.bottom = new FormAttachment(100, -10);
-		copy.setLayoutData(fd);
-		copy.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				String color = list.getSelection()[0];
-				Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
-				StringSelection select = new StringSelection(color);
-				cb.setContents(select, null);
-				subshell.forceFocus();
-			}
-		});
-
-	
-		subshell.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				// System.out.println(e.keyCode);
-				System.out.println(e.stateMask);
-				if ((e.keyCode == 'z' && (e.stateMask & SWT.ALT) != 0)) {
-
-					captureText.setText(setColorText(rgb));
-					// System.out.println(e.stateMask);
-					currentRGB = rgb;
-					list.add(captureText.getText());
-					
-					mylist.add(rgb);
-					if (list.getSelectionIndex() == -1) {
-						// System.out.println("here");
-						list.select(0);
-					}
-					// shell.setFocus();
-				}
-			}
-		});
-		combo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				mode = ((Combo) e.widget).getSelectionIndex();
-				if (rgb != null) {
-					colorText.setText(setColorText(rgb));
-					if (captureText.getText() != "") {
-
-						captureText.setText(setColorText(currentRGB));
-
-						// list.pack();
-					}
-					RGB[] temp = new RGB[mylist.size()];
-					temp = mylist.toArray(temp);
-					for (int i = 0; i < mylist.size(); i++) {
-						list.setItem(i, setColorText(temp[i]));
-					}
-				}
-				subshell.forceFocus();
-			}
-		});
-		list.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-
-				// shell.forceFocus();
-				subshell.forceFocus();
-			}
-		});
-		Label label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		label.setLayoutData(gd);
-		final Composite tempParent = parent;
-
-		chooser.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (count % 2 == 0) {
-					if ((currentComposite != null)
-							&& (!currentComposite.isDisposed())) {
-						currentComposite.dispose();
-					}
-					final Composite chooserComposite = new Composite(
-							tempParent, SWT.None);
-					GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-					gd.horizontalSpan = 3;
-					gd.heightHint = 90;
-					chooserComposite.setLayoutData(gd);
-					chooserComposite.setLayout(new GridLayout(2, false));
-					setSlider(chooserComposite);
-					currentComposite = chooserComposite;
-
-				} else {
-					if ((currentComposite != null)
-							&& (!currentComposite.isDisposed())) {
-						currentComposite.dispose();
-					}
-				}
-				// parent.layout();
-				tempParent.pack();
-				count++;
-				subshell.forceFocus();
-			}
-		});
-		addMouseTrackListener(colorLabel, positionLabel, colorText,
+	public void createContent(Shell shell){
+		shell.setLayout(new GridLayout(3, false));
+		colorComposite = createColorComposite(shell);
+		captureComposite = createCaptureComposite(shell);
+		copyComposite = createCopyComposite(shell);
+		createSeperator(shell);
+		
+		
+		/*addMouseTrackListener(colorLabel, positionLabel, colorText,
 				captureLabel, backComposite);
 		addMouseMoveListener(colorLabel, positionLabel, colorText,
 				captureLabel, backComposite);
@@ -317,8 +100,264 @@ public class ShellManager {
 		
 		// chooserComposite.setVisible(false);
 		subshell.pack();
-		subshell.forceFocus();
+		subshell.forceFocus();*/
 	}
+	
+	private ColorComposite createColorComposite(Shell shell){
+		return new ColorComposite(shell, SWT.None);
+	}
+	
+	private CaptureComposite createCaptureComposite(Shell shell){
+		return new CaptureComposite(shell, SWT.None);
+	}
+	
+	private CopyComposite createCopyComposite(Shell shell){
+		return new CopyComposite(shell, SWT.None);
+	}
+	
+	private void createSeperator(Shell shell){
+		Label label = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
+		label.setLayoutData(gridData);
+	}
+	
+	/*private void createCopyComposite(final Shell shell){
+		
+		copy.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				String color = list.getSelection()[0];
+				Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+				StringSelection select = new StringSelection(color);
+				cb.setContents(select, null);
+				shell.forceFocus();
+			}
+		});
+
+	
+		/*shell.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				// System.out.println(e.keyCode);
+				System.out.println(e.stateMask);
+				if ((e.keyCode == 'z' && (e.stateMask & SWT.ALT) != 0)) {
+
+					captureText.setText(setColorText(rgb));
+					// System.out.println(e.stateMask);
+					currentRGB = rgb;
+					list.add(captureText.getText());
+					
+					mylist.add(rgb);
+					if (list.getSelectionIndex() == -1) {
+						// System.out.println("here");
+						list.select(0);
+					}
+					// shell.setFocus();
+				}
+			}
+		});
+		combo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				mode = ((Combo) e.widget).getSelectionIndex();
+				if (rgb != null) {
+					colorText.setText(setColorText(rgb));
+					if (captureText.getText() != "") {
+
+						captureText.setText(setColorText(currentRGB));
+
+						// list.pack();
+					}
+					RGB[] temp = new RGB[mylist.size()];
+					temp = mylist.toArray(temp);
+					for (int i = 0; i < mylist.size(); i++) {
+						list.setItem(i, setColorText(temp[i]));
+					}
+				}
+				shell.forceFocus();
+			}
+		});
+		list.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+
+				// shell.forceFocus();
+				shell.forceFocus();
+			}
+		});
+		Label label = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
+		label.setLayoutData(gridData);
+		final Composite tempParent = copyComposite;
+
+		chooser.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (count % 2 == 0) {
+					if ((currentComposite != null)
+							&& (!currentComposite.isDisposed())) {
+						currentComposite.dispose();
+					}
+					final Composite chooserComposite = new Composite(
+							tempParent, SWT.None);
+					GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+					gd.horizontalSpan = 3;
+					gd.heightHint = 90;
+					chooserComposite.setLayoutData(gd);
+					chooserComposite.setLayout(new GridLayout(2, false));
+					setSlider(chooserComposite);
+					currentComposite = chooserComposite;
+
+				} else {
+					if ((currentComposite != null)
+							&& (!currentComposite.isDisposed())) {
+						currentComposite.dispose();
+					}
+				}
+				// parent.layout();
+				tempParent.pack();
+				count++;
+				shell.forceFocus();
+			}
+		})
+	}
+	
+	private Composite setSlider(Composite parent) {
+		
+		GridData gd = new GridData(GridData.FILL_VERTICAL);
+		gd.widthHint = 90;
+		// gd.minimumWidth = 100;
+		// gd.widthHint = 100;
+		final Label colorLabel2 = new Label(parent, SWT.NONE);
+		// colorLabel.setText("sss");
+		colorLabel2.setLayoutData(gd);
+		colorLabel2.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		//addMouseTrackListener(colorLabel, positionLabel, colorText,
+				//captureLabel, colorLabel2);
+		//addMouseMoveListener(colorLabel, positionLabel, colorText,
+				//captureLabel, colorLabel2);
+		colorLabel2.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				// Do some drawing
+				Label capture = (Label) e.widget;
+				// e.gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
+				// e.gc.drawLine(0, capture.getSize().y/2,
+				// capture.getSize().x,capture.getSize().y/2);
+				// e.gc.drawLine(capture.getSize().x/2, 0,
+				// capture.getSize().x/2, capture.getSize().y);
+				// e.gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+				e.gc.drawRectangle(0, 0, capture.getSize().x - 1, capture
+						.getSize().y - 1);
+			}
+		});
+		final Composite sliderComposite = new Composite(parent, SWT.None);
+		gd = new GridData(GridData.FILL_VERTICAL);
+		gd.widthHint = 265;
+		sliderComposite.setLayoutData(gd);
+		sliderComposite.setLayout(new GridLayout(3, false));
+		Label rLabel = new Label(sliderComposite, SWT.None);
+		rLabel.setText("R: ");
+		final Label rText = new Label(sliderComposite, SWT.NONE);
+		rText.setText("0");
+		gd = new GridData();
+		gd.widthHint = 20;
+		rText.setLayoutData(gd);
+		final Slider rSlider = new Slider(sliderComposite, SWT.None);
+		gd = new GridData();
+		gd.widthHint = 212;
+		rSlider.setLayoutData(gd);
+		rSlider.setMinimum(0);
+		rSlider.setMaximum(265);
+		rSlider.setIncrement(1);
+		rSlider.setPageIncrement(1);
+		rSlider.setSelection(0);
+
+		Label gLabel = new Label(sliderComposite, SWT.None);
+		gLabel.setText("G: ");
+		final Label gText = new Label(sliderComposite, SWT.NONE);
+		gText.setText("0");
+		gd = new GridData();
+		gd.widthHint = 20;
+		gText.setLayoutData(gd);
+		final Slider gSlider = new Slider(sliderComposite, SWT.None);
+		gd = new GridData();
+		gd.widthHint = 212;
+		gSlider.setLayoutData(gd);
+		gSlider.setMinimum(0);
+		gSlider.setMaximum(265);
+		gSlider.setIncrement(1);
+		gSlider.setPageIncrement(1);
+		gSlider.setSelection(0);
+
+		Label bLabel = new Label(sliderComposite, SWT.None);
+		bLabel.setText("B: ");
+		final Label bText = new Label(sliderComposite, SWT.NONE);
+		bText.setText("0");
+		gd = new GridData();
+		gd.widthHint = 20;
+		bText.setLayoutData(gd);
+		final Slider bSlider = new Slider(sliderComposite, SWT.None);
+		gd = new GridData();
+		gd.widthHint = 212;
+		bSlider.setLayoutData(gd);
+		bSlider.setMinimum(0);
+		bSlider.setMaximum(265);
+		bSlider.setIncrement(1);
+		bSlider.setPageIncrement(1);
+		bSlider.setSelection(0);
+		rSlider.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println(rSlider.getSelection());
+				rText.setText(Integer.valueOf(rSlider.getSelection())
+						.toString());
+				// sliderComposite.layout();
+				Color color = new Color(display, new RGB(
+						rSlider.getSelection(), gSlider.getSelection(), bSlider
+								.getSelection()));
+				colorLabel2.setBackground(color);
+				color.dispose();
+				shell.forceFocus();
+			}
+		});
+		gSlider.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				// System.out.println(rSlider.getSelection());
+				gText.setText(Integer.valueOf(gSlider.getSelection())
+						.toString());
+				// sliderComposite.layout();
+				Color color = new Color(display, new RGB(
+						rSlider.getSelection(), gSlider.getSelection(), bSlider
+								.getSelection()));
+				colorLabel2.setBackground(color);
+				color.dispose();
+				shell.forceFocus();
+			}
+		});
+		bSlider.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println(rSlider.getSelection());
+				bText.setText(Integer.valueOf(bSlider.getSelection())
+						.toString());
+				// sliderComposite.layout();
+				Color color = new Color(display, new RGB(
+						rSlider.getSelection(), gSlider.getSelection(), bSlider
+								.getSelection()));
+				colorLabel2.setBackground(color);
+				color.dispose();
+				shell.forceFocus();
+			}
+		});
+		addMouseTrackListener(colorLabel, positionLabel, colorText,
+				captureLabel, sliderComposite);
+		addMouseMoveListener(colorLabel, positionLabel, colorText,
+				captureLabel, sliderComposite);
+		Control[] control = sliderComposite.getChildren();
+		for(int i = 0;i < control.length;i++){
+			addMouseTrackListener(colorLabel, positionLabel, colorText,
+					captureLabel, control[i]);
+			addMouseMoveListener(colorLabel, positionLabel, colorText,
+					captureLabel, control[i]);
+		}
+		return sliderComposite;
+	}
+	
 	
 	private void addMouseMoveListener(final Label colorLabel,
 			final Label positionLabel, final Label colorText,
@@ -450,6 +489,7 @@ public class ShellManager {
 				// image.dispose();
 			}
 
-		});
+		});*/
+	
 }
 	
