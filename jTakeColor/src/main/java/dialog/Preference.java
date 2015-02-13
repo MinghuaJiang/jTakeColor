@@ -1,6 +1,8 @@
 package dialog;
 
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 

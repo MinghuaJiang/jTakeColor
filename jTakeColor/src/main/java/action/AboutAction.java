@@ -1,8 +1,9 @@
 package action;
 
 import org.eclipse.jface.action.Action;
-
 import org.eclipse.swt.SWT;
+
+import dialog.AboutDialog;
 
 public class AboutAction extends Action {
 	public AboutAction() {
