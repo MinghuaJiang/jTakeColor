@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class CaptureComposite extends Composite {
-	private Label captureLabel;
+	private Label captureBox;
 	private Text captureText;
 
 	public CaptureComposite(Composite parent, int style) {
@@ -30,9 +30,9 @@ public class CaptureComposite extends Composite {
 		formData.top = new FormAttachment(0, 10);
 		formData.bottom = new FormAttachment(80, -10);
 
-		Label captureLabel = new Label(this, SWT.NONE);
-		captureLabel.setLayoutData(formData);
-		captureLabel.addPaintListener(new PaintListener() {
+		captureBox = new Label(this, SWT.NONE);
+		captureBox.setLayoutData(formData);
+		captureBox.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				Label capture = (Label) e.widget;
 				e.gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
@@ -42,17 +42,17 @@ public class CaptureComposite extends Composite {
 				e.gc.drawRectangle(0, 0, capture.getSize().x - 1, capture.getSize().y - 1);
 			}
 		});
-		final Text captureText = new Text(this, SWT.BORDER | SWT.SINGLE);
+		captureText = new Text(this, SWT.BORDER | SWT.SINGLE);
 		formData = new FormData();
 		formData.left = new FormAttachment(0, 10);
 		formData.right = new FormAttachment(100, -10);
-		formData.top = new FormAttachment(captureLabel, 10);
+		formData.top = new FormAttachment(captureBox, 10);
 		formData.bottom = new FormAttachment(100, -10);
 		captureText.setLayoutData(formData);
 	}
 
-	public Label getCaptureLabel() {
-		return captureLabel;
+	public Label getCaptureBox() {
+		return captureBox;
 	}
 
 	public Text getCaptureText() {

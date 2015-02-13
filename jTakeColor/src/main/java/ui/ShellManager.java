@@ -1,48 +1,25 @@
 package ui;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.util.Arrays;
-
-import model.CaptureType;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Slider;
-import org.eclipse.swt.widgets.Text;
 
 import ui.composite.CaptureComposite;
 import ui.composite.ColorComposite;
 import ui.composite.CopyComposite;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import ui.composite.PaletteComposite;
+import ui.composite.SliderComposite;
+import ui.event.EventManager;
 
 public class ShellManager {
-	private Composite currentComposite;
-	private int count;
+
 	private ColorComposite colorComposite;
 	private CaptureComposite captureComposite;
 	private CopyComposite copyComposite;
+	private PaletteComposite paletteComposite;
+	private SliderComposite sliderComposite;
 	
 	public void configureShell(Shell shell) {
 		createContent(shell);
@@ -53,7 +30,22 @@ public class ShellManager {
 		colorComposite = createColorComposite(shell);
 		captureComposite = createCaptureComposite(shell);
 		copyComposite = createCopyComposite(shell);
+		paletteComposite = copyComposite.getPaletteComposite();
+		
 		createSeperator(shell);
+		EventManager.addMouseTrackListener(shell);
+		EventManager.addMouseMotionListener(shell);
+		EventManager.addMouseTrackListener(colorComposite);
+		EventManager.addMouseMotionListener(colorComposite);
+		EventManager.addMouseTrackListener(captureComposite);
+		EventManager.addMouseMotionListener(captureComposite);
+		EventManager.addMouseTrackListener(copyComposite);
+		EventManager.addMouseMotionListener(copyComposite);
+		
+		EventManager.addMouseTrackListener(paletteComposite);
+		EventManager.addMouseMotionListener(paletteComposite);
+		EventManager.addMouseTrackListener(sliderComposite);
+		EventManager.addMouseMotionListener(sliderComposite);
 		
 		
 		/*addMouseTrackListener(colorLabel, positionLabel, colorText,
@@ -120,6 +112,26 @@ public class ShellManager {
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 3;
 		label.setLayoutData(gridData);
+	}
+
+	public ColorComposite getColorComposite() {
+		return colorComposite;
+	}
+
+	public CaptureComposite getCaptureComposite() {
+		return captureComposite;
+	}
+
+	public CopyComposite getCopyComposite() {
+		return copyComposite;
+	}
+
+	public PaletteComposite getPaletteComposite() {
+		return paletteComposite;
+	}
+
+	public SliderComposite getSliderComposite() {
+		return sliderComposite;
 	}
 	
 	/*private void createCopyComposite(final Shell shell){

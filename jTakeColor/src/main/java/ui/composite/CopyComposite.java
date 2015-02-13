@@ -83,4 +83,12 @@ public class CopyComposite extends Composite {
 		return copy;
 	}
 
+	public boolean isPaletteOpen() {
+		return isPaletteOpen;
+	}
+
+	public PaletteComposite getPaletteComposite() {
+		return paletteComposite;
+	}
+	
 }

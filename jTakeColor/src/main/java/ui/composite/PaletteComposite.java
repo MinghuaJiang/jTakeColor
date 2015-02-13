@@ -42,14 +42,7 @@ public class PaletteComposite extends Composite {
 		// captureLabel, colorLabel2);
 		colorLabel.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				// Do some drawing
 				Label capture = (Label) e.widget;
-				// e.gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
-				// e.gc.drawLine(0, capture.getSize().y/2,
-				// capture.getSize().x,capture.getSize().y/2);
-				// e.gc.drawLine(capture.getSize().x/2, 0,
-				// capture.getSize().x/2, capture.getSize().y);
-				// e.gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 				e.gc.drawRectangle(0, 0, capture.getSize().x - 1, capture.getSize().y - 1);
 			}
 		});
@@ -101,4 +94,9 @@ public class PaletteComposite extends Composite {
 			}
 		});
 	}
+
+	public SliderComposite getSliderComposite() {
+		return sliderComposite;
+	}
+	
 }
