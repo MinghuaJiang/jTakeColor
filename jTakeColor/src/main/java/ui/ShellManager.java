@@ -10,7 +10,6 @@ import org.eclipse.swt.widgets.Shell;
 import ui.composite.CaptureComposite;
 import ui.composite.ColorComposite;
 import ui.composite.CopyComposite;
-import ui.event.EventManager;
 
 public class ShellManager {
 
