@@ -13,6 +13,6 @@ public class AboutAction extends Action {
 	}
 
 	public void run() {
-		//AboutDialog.showAboutMessageBox();
+		AboutDialog.showAboutMessageBox();
 	}
 }
