@@ -3,8 +3,7 @@ package model;
 import org.eclipse.swt.graphics.RGB;
 
 public enum CaptureType {
-	RGB {
-
+	HTML {
 		@Override
 		public String getColorText(RGB rgb) {
 			int R = rgb.red;
@@ -22,7 +21,7 @@ public enum CaptureType {
 		}
 
 	},
-	HTML {
+	RGB {
 
 		@Override
 		public String getColorText(RGB rgb) {
