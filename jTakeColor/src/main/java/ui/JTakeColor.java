@@ -4,15 +4,14 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import ui.event.EventManager;
 import util.PreferenceUtil;
 import action.AboutAction;
+import action.AmplifyActionGroup;
 import action.HelpAction;
-import action.SettingAction;
 
 public class JTakeColor extends ApplicationWindow {
 
@@ -23,6 +22,7 @@ public class JTakeColor extends ApplicationWindow {
 	public JTakeColor(Shell parent) {
 		super(parent);
 		this.parent = parent;
+		PreferenceUtil.getInstance().load();
 		addMenuBar();
 		app = this;
 	}
@@ -32,7 +32,6 @@ public class JTakeColor extends ApplicationWindow {
 	}
 
 	public void run() {
-		PreferenceUtil.getInstance().load();
 		setBlockOnOpen(true);
 		parent.open();
 		open();
@@ -41,15 +40,18 @@ public class JTakeColor extends ApplicationWindow {
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		Image image = new Image(shell.getDisplay(), JTakeColor.class.getClassLoader().getResourceAsStream("icon.jpg"));
+		// Image image = new Image(shell.getDisplay(),
+		// JTakeColor.class.getClassLoader().getResourceAsStream("icon.jpg"));
 		shell.setText("JTakeColor");
 		shell.setBounds(100, 100, 431, 350);
-		shell.setImage(image);
+		// shell.setImage(image);
 		shellManager = new ShellManager();
 		shellManager.configureShell(shell);
-		shell.addDisposeListener(new DisposeListener(){
+
+		shell.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
+				PreferenceUtil.getInstance().save();
 				parent.dispose();
 			}
 		});
@@ -61,13 +63,13 @@ public class JTakeColor extends ApplicationWindow {
 	protected MenuManager createMenuManager() {
 		MenuManager mm = new MenuManager();
 		MenuManager setMenu = new MenuManager("Setting");
-		MenuManager aboutMenu = new MenuManager("About");
+		MenuManager amplifyMenu = new MenuManager("Amplify");
 		MenuManager helpMenu = new MenuManager("Help");
 		mm.add(setMenu);
-		mm.add(aboutMenu);
 		mm.add(helpMenu);
-		setMenu.add(new SettingAction());
-		aboutMenu.add(new AboutAction());
+		setMenu.add(amplifyMenu);
+		new AmplifyActionGroup(amplifyMenu);
+		helpMenu.add(new AboutAction());
 		helpMenu.add(new HelpAction());
 		return mm;
 	}
@@ -87,10 +89,12 @@ public class JTakeColor extends ApplicationWindow {
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
-		shell.setBounds(0, 0, display.getBounds().width, display.getBounds().width);
+		shell.setBounds(0, 0, display.getBounds().width,
+				display.getBounds().width);
 		shell.setAlpha(1);
-		Image image = new Image(display, JTakeColor.class.getClassLoader().getResourceAsStream("icon.jpg"));
-		shell.setImage(image);
+		// Image image = new Image(display,
+		// JTakeColor.class.getClassLoader().getResourceAsStream("icon.jpg"));
+		// shell.setImage(image);
 		new JTakeColor(shell).run();
 	}
 

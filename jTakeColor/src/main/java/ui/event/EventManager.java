@@ -39,15 +39,17 @@ public class EventManager {
 	}
 
 	public static void addKeyListener(Shell shell) {
-		ColorComposite colorComposite = JTakeColor.getTakeColorWindow().getShellManager().getColorComposite();
+		ColorComposite colorComposite = JTakeColor.getTakeColorWindow()
+				.getShellManager().getColorComposite();
 		final Label colorText = colorComposite.getColorText();
-		CopyComposite copyComposite = JTakeColor.getTakeColorWindow().getShellManager().getCopyComposite();
-		final List copyList = copyComposite.getCopyList();
-		shell.forceFocus();
+		CopyComposite copyComposite = JTakeColor.getTakeColorWindow()
+				.getShellManager().getCopyComposite();
+		final List copyList = copyComposite.getCopyList();		
 		shell.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
+				shell.forceFocus();
 				System.out.println("hello");
-				if ((e.keyCode == 'z' && (e.stateMask & SWT.ALT) != 0)) {
+				if ((e.keyCode == 'c' && (e.stateMask & SWT.ALT) != 0)) {
 					copyList.add(colorText.getText());
 				}
 			}
@@ -75,9 +77,9 @@ public class EventManager {
 	}
 
 	private static void handleMouseEvent(MouseEvent e) {
-
-		int ratio = PreferenceUtil.getInstance().getIntegerPreference("amplify");
-		ShellManager shellManager = JTakeColor.getTakeColorWindow().getShellManager();
+		int ratio = Integer.parseInt(PreferenceUtil.getInstance().getProperty(PreferenceUtil.AMPLIFY));
+		ShellManager shellManager = JTakeColor.getTakeColorWindow()
+				.getShellManager();
 		ColorComposite colorComposite = shellManager.getColorComposite();
 		final Label colorBox = colorComposite.getColorBox();
 		final Label positionText = colorComposite.getPositionText();
@@ -98,21 +100,25 @@ public class EventManager {
 
 		int currentWidth = captureBox.getBounds().width;
 		int currentHeight = captureBox.getBounds().height;
-		Rectangle sampleRectangle = new Rectangle(mouseLocation.x - (currentWidth / 2), mouseLocation.y
-				- (currentHeight / 2), currentWidth, currentHeight);
+		Rectangle sampleRectangle = new Rectangle(mouseLocation.x
+				- (currentWidth / 2), mouseLocation.y - (currentHeight / 2),
+				currentWidth, currentHeight);
 
-		BufferedImage bImage = CaptureImageUtil.getInstance().getCaptureImage(sampleRectangle);
-		BufferedImage doublebuffer = new BufferedImage(bImage.getWidth(), bImage.getHeight(),
-				BufferedImage.TYPE_INT_RGB);
+		BufferedImage bImage = CaptureImageUtil.getInstance().getCaptureImage(
+				sampleRectangle);
+		BufferedImage doublebuffer = new BufferedImage(bImage.getWidth(),
+				bImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
 		Graphics2D graphics2d = (Graphics2D) doublebuffer.getGraphics();
-		graphics2d.drawImage(bImage, -bImage.getWidth() * (ratio - 1) / 2, -bImage.getHeight() * (ratio - 1)
-				/ 2, bImage.getWidth() * ratio, bImage.getHeight() * ratio, null);
+		graphics2d.drawImage(bImage, -bImage.getWidth() * (ratio - 1) / 2,
+				-bImage.getHeight() * (ratio - 1) / 2, bImage.getWidth()
+						* ratio, bImage.getHeight() * ratio, null);
 
 		ImageData imageData = ImageUtil.getImageData(doublebuffer);
-
+		
 		if (doublebuffer != null) {
-			int rgb = doublebuffer.getRGB(doublebuffer.getWidth() / 2, doublebuffer.getHeight() / 2);
+			int rgb = doublebuffer.getRGB(doublebuffer.getWidth() / 2,
+					doublebuffer.getHeight() / 2);
 			int R = (rgb & 0xff0000) >> 16;
 			int G = (rgb & 0xff00) >> 8;
 			int B = (rgb & 0xff);

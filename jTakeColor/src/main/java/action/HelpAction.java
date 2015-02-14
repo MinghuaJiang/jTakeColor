@@ -6,9 +6,9 @@ import org.eclipse.swt.SWT;
 public class HelpAction extends Action {
 	public HelpAction() {
 		super();
-		this.setText("Help Contents");
+		this.setText("Help");
 		this.setAccelerator(SWT.CTRL + 'H');
-		this.setToolTipText("Help Contents");
+		this.setToolTipText("Help");
 	}
 
 	public void run() {

@@ -1,55 +1,47 @@
 package util;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-
-import org.eclipse.jface.preference.PreferenceStore;
+import java.util.Properties;
 
 public class PreferenceUtil {
+	public static final String AMPLIFY = "Amplify";
+	
 	private static PreferenceUtil preference = new PreferenceUtil();
-	private PreferenceStore ps;
+	private Properties ps;
 
 	public PreferenceUtil() {
-		ps = new PreferenceStore("takeColor.properties");
+		ps = new Properties();
 	}
 
 	public static PreferenceUtil getInstance() {
 		return preference;
 	}
 
-	public PreferenceStore getPreferenceStore() {
-		return ps;
-	}
-
-	public String getStringPreference(String key) {
-		return ps.getString(key);
-	}
-
-	public boolean getBooleanPreference(String key) {
-		return ps.getBoolean(key);
-	}
-
-	public int getIntegerPreference(String key) {
-		return ps.getInt(key);
-	}
-
-	public double getDoublePreference(String key) {
-		return ps.getDouble(key);
-	}
-
 	public void load() {
 		try {
-			ps.load();
+			ps.load(new FileInputStream("takeColor.properties"));
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public void save() {
 		try {
-			ps.save();
+			ps.store(new FileOutputStream("takeColor.properties"), "");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public String getProperty(String key) {
+		return ps.getProperty(key);
+	}
+
+	public void setProperty(String key, String value) {
+		ps.setProperty(key, value);
+	}
+
 }

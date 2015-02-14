@@ -3,6 +3,7 @@ package ui.composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -14,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class CopyComposite extends Composite {
 	private List copyList;
+	private java.util.List<RGB> rgbList;
 	private Button palette;
 	private Button copy;
 	private boolean isPaletteOpen;
@@ -73,6 +75,10 @@ public class CopyComposite extends Composite {
 
 	public List getCopyList() {
 		return copyList;
+	}
+	
+	public java.util.List<RGB> getRgbList() {
+		return rgbList;
 	}
 
 	public Button getPalette() {
