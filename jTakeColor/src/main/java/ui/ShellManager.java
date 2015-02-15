@@ -2,9 +2,7 @@ package ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import ui.composite.CaptureComposite;
@@ -27,7 +25,6 @@ public class ShellManager {
 		colorComposite = createColorComposite(shell);
 		captureComposite = createCaptureComposite(shell);
 		copyComposite = createCopyComposite(shell);
-		createSeperator(shell);
 	}
 	
 	private ColorComposite createColorComposite(Shell shell){
@@ -42,13 +39,6 @@ public class ShellManager {
 		return new CopyComposite(shell, SWT.None);
 	}
 	
-	private void createSeperator(Shell shell){
-		Label label = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
-		label.setLayoutData(gridData);
-	}
-
 	public ColorComposite getColorComposite() {
 		return colorComposite;
 	}

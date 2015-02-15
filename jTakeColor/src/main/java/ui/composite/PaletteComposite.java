@@ -26,7 +26,7 @@ public class PaletteComposite extends Composite {
 		this.setLayout(new GridLayout(2, false));
 		addSlider(this);
 	}
-
+	
 	private void addSlider(Composite parent) {
 		Display display = Display.getCurrent();
 		GridData gridData = new GridData(GridData.FILL_VERTICAL);
@@ -36,10 +36,6 @@ public class PaletteComposite extends Composite {
 
 		colorLabel.setLayoutData(gridData);
 		colorLabel.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		// addMouseTrackListener(colorLabel, positionLabel, colorText,
-		// captureLabel, colorLabel2);
-		// addMouseMoveListener(colorLabel, positionLabel, colorText,
-		// captureLabel, colorLabel2);
 		colorLabel.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				Label capture = (Label) e.widget;
@@ -48,13 +44,6 @@ public class PaletteComposite extends Composite {
 		});
 		sliderComposite = new SliderComposite(parent, SWT.None);
 		addSelectionListenerForSlider(colorLabel);
-		/*addMouseTrackListener(colorLabel, positionLabel, colorText, captureLabel, sliderComposite);
-		addMouseMoveListener(colorLabel, positionLabel, colorText, captureLabel, sliderComposite);
-		Control[] control = sliderComposite.getChildren();
-		for (int i = 0; i < control.length; i++) {
-			addMouseTrackListener(colorLabel, positionLabel, colorText, captureLabel, control[i]);
-			addMouseMoveListener(colorLabel, positionLabel, colorText, captureLabel, control[i]);
-		}*/
 	}
 	
 	private void addSelectionListenerForSlider(final Label colorLabel){

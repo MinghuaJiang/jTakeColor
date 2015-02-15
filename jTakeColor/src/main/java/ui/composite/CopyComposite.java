@@ -12,12 +12,17 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+
+import ui.JTakeColor;
+import ui.ShellManager;
+
+import com.google.common.collect.Lists;
 
 public class CopyComposite extends Composite {
 	private List copyList;
 	private java.util.List<RGB> rgbList;
 	private Button palette;
-	private Button copy;
 	private boolean isPaletteOpen;
 	private PaletteComposite paletteComposite;
 
@@ -26,7 +31,7 @@ public class CopyComposite extends Composite {
 		isPaletteOpen = false;
 		GridData gridData = new GridData();
 		gridData.heightHint = 200;
-		gridData.widthHint = 115;
+		gridData.widthHint = 110;
 		this.setLayoutData(gridData);
 		this.setLayout(new FormLayout());
 		FormData formData = new FormData();
@@ -36,28 +41,32 @@ public class CopyComposite extends Composite {
 		formData.bottom = new FormAttachment(80, -10);
 		copyList = new List(this, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		copyList.setLayoutData(formData);
+		copyList.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int index = ((List) e.widget).getSelectionIndex();
+				final ShellManager shellManager = JTakeColor
+						.getTakeColorWindow().getShellManager();
+				CaptureComposite captureComposite = shellManager
+						.getCaptureComposite();
+				final Text captureText = captureComposite.getCaptureText();
+				captureText.setText(copyList.getItem(index));
+			}
+		});
 		palette = new Button(this, SWT.PUSH);
 		palette.setText("Palette");
 		formData = new FormData();
+		formData.left = new FormAttachment(0, 10);
 		formData.right = new FormAttachment(100, -10);
 		formData.top = new FormAttachment(copyList, 10);
 		formData.bottom = new FormAttachment(100, -10);
 		palette.setLayoutData(formData);
 		addClickListenerForPalette(palette);
+		rgbList = Lists.newArrayList();
 
-		copy = new Button(this, SWT.PUSH);
-		copy.setText("Copy");
-		formData = new FormData();
-		formData.left = new FormAttachment(0, 10);
-		formData.right = new FormAttachment(palette, -10);
-		formData.top = new FormAttachment(copyList, 10);
-		formData.bottom = new FormAttachment(100, -10);
-		copy.setLayoutData(formData);
 	}
 
 	private void addClickListenerForPalette(Button palette) {
-		// final Composite tempParent = copyComposite;
-
 		palette.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Shell shell = CopyComposite.this.getShell();
@@ -76,17 +85,13 @@ public class CopyComposite extends Composite {
 	public List getCopyList() {
 		return copyList;
 	}
-	
+
 	public java.util.List<RGB> getRgbList() {
 		return rgbList;
 	}
 
 	public Button getPalette() {
 		return palette;
-	}
-
-	public Button getCopy() {
-		return copy;
 	}
 
 	public boolean isPaletteOpen() {
@@ -96,5 +101,5 @@ public class CopyComposite extends Composite {
 	public PaletteComposite getPaletteComposite() {
 		return paletteComposite;
 	}
-	
+
 }

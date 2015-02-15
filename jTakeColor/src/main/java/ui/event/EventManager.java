@@ -7,8 +7,6 @@ import java.awt.image.BufferedImage;
 import model.CaptureType;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
@@ -20,9 +18,11 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 
 import ui.JTakeColor;
 import ui.ShellManager;
@@ -38,19 +38,24 @@ public class EventManager {
 		doAddMouseTrackListener(control);
 	}
 
-	public static void addKeyListener(Shell shell) {
-		ColorComposite colorComposite = JTakeColor.getTakeColorWindow()
-				.getShellManager().getColorComposite();
+	public static void addKeyListener() {
+		final ShellManager shellManager = JTakeColor.getTakeColorWindow()
+				.getShellManager();
+		ColorComposite colorComposite = shellManager.getColorComposite();
+		CaptureComposite captureComposite = shellManager.getCaptureComposite();
 		final Label colorText = colorComposite.getColorText();
-		CopyComposite copyComposite = JTakeColor.getTakeColorWindow()
-				.getShellManager().getCopyComposite();
-		final List copyList = copyComposite.getCopyList();		
-		shell.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				shell.forceFocus();
-				System.out.println("hello");
-				if ((e.keyCode == 'c' && (e.stateMask & SWT.ALT) != 0)) {
-					copyList.add(colorText.getText());
+		CopyComposite copyComposite = shellManager.getCopyComposite();
+		final List copyList = copyComposite.getCopyList();
+		final java.util.List<RGB> rgbList = copyComposite.getRgbList();
+		final Text captureText = captureComposite.getCaptureText();
+		Display display = Display.getCurrent();
+		display.addFilter(SWT.KeyDown, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				if (e.keyCode == 'c' && (e.stateMask & SWT.ALT) != 0) {
+					rgbList.add(0, shellManager.getCurrentRGB());
+					copyList.add(colorText.getText(), 0);
+					captureText.setText(colorText.getText());
 				}
 			}
 		});
@@ -77,7 +82,8 @@ public class EventManager {
 	}
 
 	private static void handleMouseEvent(MouseEvent e) {
-		int ratio = Integer.parseInt(PreferenceUtil.getInstance().getProperty(PreferenceUtil.AMPLIFY));
+		int ratio = Integer.parseInt(PreferenceUtil.getInstance().getProperty(
+				PreferenceUtil.AMPLIFY));
 		ShellManager shellManager = JTakeColor.getTakeColorWindow()
 				.getShellManager();
 		ColorComposite colorComposite = shellManager.getColorComposite();
@@ -115,7 +121,7 @@ public class EventManager {
 						* ratio, bImage.getHeight() * ratio, null);
 
 		ImageData imageData = ImageUtil.getImageData(doublebuffer);
-		
+
 		if (doublebuffer != null) {
 			int rgb = doublebuffer.getRGB(doublebuffer.getWidth() / 2,
 					doublebuffer.getHeight() / 2);

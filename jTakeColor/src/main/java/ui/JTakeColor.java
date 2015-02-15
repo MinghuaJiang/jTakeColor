@@ -43,7 +43,8 @@ public class JTakeColor extends ApplicationWindow {
 		// Image image = new Image(shell.getDisplay(),
 		// JTakeColor.class.getClassLoader().getResourceAsStream("icon.jpg"));
 		shell.setText("JTakeColor");
-		shell.setBounds(100, 100, 431, 350);
+		shell.setLocation(100,100);
+		
 		// shell.setImage(image);
 		shellManager = new ShellManager();
 		shellManager.configureShell(shell);
@@ -57,7 +58,10 @@ public class JTakeColor extends ApplicationWindow {
 		});
 		EventManager.addMouseTrackListener(parent);
 		EventManager.addMouseMotionListener(parent);
-		EventManager.addKeyListener(parent);
+		EventManager.addKeyListener();
+		shell.pack();
+		shell.forceFocus();
+		shell.forceActive();
 	}
 
 	protected MenuManager createMenuManager() {
@@ -90,8 +94,9 @@ public class JTakeColor extends ApplicationWindow {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setBounds(0, 0, display.getBounds().width,
-				display.getBounds().width);
+				display.getBounds().height);
 		shell.setAlpha(1);
+		
 		// Image image = new Image(display,
 		// JTakeColor.class.getClassLoader().getResourceAsStream("icon.jpg"));
 		// shell.setImage(image);
