@@ -55,6 +55,11 @@ public class EventManager {
 				if (e.keyCode == 'c' && (e.stateMask & SWT.ALT) != 0) {
 					rgbList.add(0, shellManager.getCurrentRGB());
 					copyList.add(colorText.getText(), 0);
+					int R = shellManager.getCurrentRGB().red;
+					int G = shellManager.getCurrentRGB().green;
+					int B = shellManager.getCurrentRGB().blue;
+					Color color = new Color(Display.getDefault(), R, G, B);
+					copyList.setBackground(color);
 					captureText.setText(colorText.getText());
 				}
 			}

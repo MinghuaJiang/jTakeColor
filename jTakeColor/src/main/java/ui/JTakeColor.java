@@ -4,6 +4,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -40,12 +41,12 @@ public class JTakeColor extends ApplicationWindow {
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		// Image image = new Image(shell.getDisplay(),
-		// JTakeColor.class.getClassLoader().getResourceAsStream("icon.jpg"));
+	    Image image = new Image(shell.getDisplay(),
+		JTakeColor.class.getClassLoader().getResourceAsStream("icons/icon.png"));
 		shell.setText("JTakeColor");
-		shell.setLocation(100,100);
-		
-		// shell.setImage(image);
+		shell.setLocation(100, 100);
+
+		shell.setImage(image);
 		shellManager = new ShellManager();
 		shellManager.configureShell(shell);
 
@@ -96,10 +97,9 @@ public class JTakeColor extends ApplicationWindow {
 		shell.setBounds(0, 0, display.getBounds().width,
 				display.getBounds().height);
 		shell.setAlpha(1);
-		
-		// Image image = new Image(display,
-		// JTakeColor.class.getClassLoader().getResourceAsStream("icon.jpg"));
-		// shell.setImage(image);
+		Image image = new Image(display, JTakeColor.class.getClassLoader()
+				.getResourceAsStream("icons/icon.png"));
+		shell.setImage(image);
 		new JTakeColor(shell).run();
 	}
 
