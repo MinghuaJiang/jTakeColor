@@ -1,6 +1,7 @@
 package ui.composite;
 
 import java.util.Arrays;
+import java.util.List;
 
 import model.CaptureType;
 
@@ -17,7 +18,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 import ui.JTakeColor;
@@ -50,8 +51,7 @@ public class ColorComposite extends Composite {
 		colorBox.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				Label capture = (Label) e.widget;
-				e.gc.drawRectangle(0, 0, capture.getSize().x - 1,
-						capture.getSize().y - 1);
+				e.gc.drawRectangle(0, 0, capture.getSize().x - 1, capture.getSize().y - 1);
 			}
 		});
 		positionText = new Label(this, SWT.NONE);
@@ -75,47 +75,38 @@ public class ColorComposite extends Composite {
 		formData.top = new FormAttachment(colorText, 10);
 		formData.bottom = new FormAttachment(100, -10);
 		typeCombo.setLayoutData(formData);
-		typeCombo.setItems(Lists.transform(Arrays.asList(CaptureType.values()),
-				new Function<CaptureType, String>() {
-					@Override
-					public String apply(CaptureType input) {
-						return input.name();
-					}
+		typeCombo.setItems(Lists.transform(Arrays.asList(CaptureType.values()), new Function<CaptureType, String>() {
+			@Override
+			public String apply(CaptureType input) {
+				return input.name();
+			}
 
-				}).toArray(new String[0]));
+		}).toArray(new String[0]));
 		typeCombo.select(0);
 		typeCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 
-				String type = typeCombo.getItem(((Combo) e.widget)
-						.getSelectionIndex());
+				String type = typeCombo.getItem(((Combo) e.widget).getSelectionIndex());
 				CaptureType captureType = CaptureType.valueOf(type);
-				ShellManager shellManager = JTakeColor.getTakeColorWindow()
-						.getShellManager();
+				ShellManager shellManager = JTakeColor.getTakeColorWindow().getShellManager();
 				CopyComposite copyComposite = shellManager.getCopyComposite();
-				List copyList = copyComposite.getCopyList();
-				java.util.List<RGB> rgbList = copyComposite.getRgbList();
-				Text captureText = shellManager.getCaptureComposite()
-						.getCaptureText();
+				Table copyList = copyComposite.getCopyList();
+				List<RGB> rgbList = copyComposite.getRgbList();
+				Text captureText = shellManager.getCaptureComposite().getCaptureText();
 				if (shellManager.getCurrentRGB() != null) {
-					colorText.setText(captureType.getColorText(shellManager
-							.getCurrentRGB()));
-					int selectIndex = copyList.getSelectionIndex();
-					copyList.removeAll();
+					colorText.setText(captureType.getColorText(shellManager.getCurrentRGB()));
 					for (int i = 0; i < rgbList.size(); i++) {
-						copyList.add(captureType.getColorText(rgbList.get(i)));
+						copyList.getItem(i).setText(captureType.getColorText(rgbList.get(i)));
 					}
 					if (rgbList.size() > 0) {
+						int selectIndex = copyList.getSelectionIndex();
 						if (selectIndex >= 0) {
-							captureText.setText(captureType
-									.getColorText(rgbList.get(selectIndex)));
+							captureText.setText(captureType.getColorText(rgbList.get(selectIndex)));
 							copyList.select(selectIndex);
 						} else {
-							captureText.setText(captureType
-									.getColorText(rgbList.get(0)));
+							captureText.setText(captureType.getColorText(rgbList.get(0)));
 						}
-						captureText.setText(captureType.getColorText(rgbList
-								.get(selectIndex >= 0 ? selectIndex : 0)));
+						captureText.setText(captureType.getColorText(rgbList.get(selectIndex >= 0 ? selectIndex : 0)));
 					}
 				}
 			}
