@@ -3,6 +3,7 @@ package ui.event;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import model.CaptureType;
 
@@ -20,8 +21,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import ui.JTakeColor;
@@ -39,14 +41,13 @@ public class EventManager {
 	}
 
 	public static void addKeyListener() {
-		final ShellManager shellManager = JTakeColor.getTakeColorWindow()
-				.getShellManager();
+		final ShellManager shellManager = JTakeColor.getTakeColorWindow().getShellManager();
 		ColorComposite colorComposite = shellManager.getColorComposite();
 		CaptureComposite captureComposite = shellManager.getCaptureComposite();
 		final Label colorText = colorComposite.getColorText();
 		CopyComposite copyComposite = shellManager.getCopyComposite();
-		final List copyList = copyComposite.getCopyList();
-		final java.util.List<RGB> rgbList = copyComposite.getRgbList();
+		final Table copyList = copyComposite.getCopyList();
+		final List<RGB> rgbList = copyComposite.getRgbList();
 		final Text captureText = captureComposite.getCaptureText();
 		Display display = Display.getCurrent();
 		display.addFilter(SWT.KeyDown, new Listener() {
@@ -54,13 +55,15 @@ public class EventManager {
 			public void handleEvent(Event e) {
 				if (e.keyCode == 'c' && (e.stateMask & SWT.ALT) != 0) {
 					rgbList.add(0, shellManager.getCurrentRGB());
-					copyList.add(colorText.getText(), 0);
+					TableItem item = new TableItem(copyList, SWT.NONE, 0);
 					int R = shellManager.getCurrentRGB().red;
 					int G = shellManager.getCurrentRGB().green;
 					int B = shellManager.getCurrentRGB().blue;
 					Color color = new Color(Display.getDefault(), R, G, B);
-					copyList.setBackground(color);
+					item.setBackground(color);
+					item.setText(colorText.getText());
 					captureText.setText(colorText.getText());
+					color.dispose();
 				}
 			}
 		});
@@ -87,10 +90,8 @@ public class EventManager {
 	}
 
 	private static void handleMouseEvent(MouseEvent e) {
-		int ratio = Integer.parseInt(PreferenceUtil.getInstance().getProperty(
-				PreferenceUtil.AMPLIFY));
-		ShellManager shellManager = JTakeColor.getTakeColorWindow()
-				.getShellManager();
+		int ratio = Integer.parseInt(PreferenceUtil.getInstance().getProperty(PreferenceUtil.AMPLIFY));
+		ShellManager shellManager = JTakeColor.getTakeColorWindow().getShellManager();
 		ColorComposite colorComposite = shellManager.getColorComposite();
 		final Label colorBox = colorComposite.getColorBox();
 		final Label positionText = colorComposite.getPositionText();
@@ -111,25 +112,21 @@ public class EventManager {
 
 		int currentWidth = captureBox.getBounds().width;
 		int currentHeight = captureBox.getBounds().height;
-		Rectangle sampleRectangle = new Rectangle(mouseLocation.x
-				- (currentWidth / 2), mouseLocation.y - (currentHeight / 2),
-				currentWidth, currentHeight);
+		Rectangle sampleRectangle = new Rectangle(mouseLocation.x - (currentWidth / 2), mouseLocation.y
+				- (currentHeight / 2), currentWidth, currentHeight);
 
-		BufferedImage bImage = CaptureImageUtil.getInstance().getCaptureImage(
-				sampleRectangle);
-		BufferedImage doublebuffer = new BufferedImage(bImage.getWidth(),
-				bImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+		BufferedImage bImage = CaptureImageUtil.getInstance().getCaptureImage(sampleRectangle);
+		BufferedImage doublebuffer = new BufferedImage(bImage.getWidth(), bImage.getHeight(),
+				BufferedImage.TYPE_INT_RGB);
 
 		Graphics2D graphics2d = (Graphics2D) doublebuffer.getGraphics();
-		graphics2d.drawImage(bImage, -bImage.getWidth() * (ratio - 1) / 2,
-				-bImage.getHeight() * (ratio - 1) / 2, bImage.getWidth()
-						* ratio, bImage.getHeight() * ratio, null);
+		graphics2d.drawImage(bImage, -bImage.getWidth() * (ratio - 1) / 2, -bImage.getHeight() * (ratio - 1) / 2,
+				bImage.getWidth() * ratio, bImage.getHeight() * ratio, null);
 
 		ImageData imageData = ImageUtil.getImageData(doublebuffer);
 
 		if (doublebuffer != null) {
-			int rgb = doublebuffer.getRGB(doublebuffer.getWidth() / 2,
-					doublebuffer.getHeight() / 2);
+			int rgb = doublebuffer.getRGB(doublebuffer.getWidth() / 2, doublebuffer.getHeight() / 2);
 			int R = (rgb & 0xff0000) >> 16;
 			int G = (rgb & 0xff00) >> 8;
 			int B = (rgb & 0xff);
