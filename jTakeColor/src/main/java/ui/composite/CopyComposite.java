@@ -1,5 +1,7 @@
 package ui.composite;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -10,8 +12,8 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 import ui.JTakeColor;
@@ -20,8 +22,8 @@ import ui.ShellManager;
 import com.google.common.collect.Lists;
 
 public class CopyComposite extends Composite {
-	private List copyList;
-	private java.util.List<RGB> rgbList;
+	private Table copyList;
+	private List<RGB> rgbList;
 	private Button palette;
 	private boolean isPaletteOpen;
 	private PaletteComposite paletteComposite;
@@ -39,18 +41,18 @@ public class CopyComposite extends Composite {
 		formData.right = new FormAttachment(100, -10);
 		formData.top = new FormAttachment(0, 10);
 		formData.bottom = new FormAttachment(80, -10);
-		copyList = new List(this, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+		copyList = new Table(this, SWT.V_SCROLL | SWT.BORDER);
 		copyList.setLayoutData(formData);
 		copyList.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				int index = ((List) e.widget).getSelectionIndex();
-				final ShellManager shellManager = JTakeColor
-						.getTakeColorWindow().getShellManager();
-				CaptureComposite captureComposite = shellManager
-						.getCaptureComposite();
-				final Text captureText = captureComposite.getCaptureText();
-				captureText.setText(copyList.getItem(index));
+				int index = ((Table) e.widget).getSelectionIndex();
+				if (index >= 0) {
+					final ShellManager shellManager = JTakeColor.getTakeColorWindow().getShellManager();
+					CaptureComposite captureComposite = shellManager.getCaptureComposite();
+					final Text captureText = captureComposite.getCaptureText();
+					captureText.setText(copyList.getItem(index).getText());
+				}
 			}
 		});
 		palette = new Button(this, SWT.PUSH);
@@ -82,11 +84,11 @@ public class CopyComposite extends Composite {
 		});
 	}
 
-	public List getCopyList() {
+	public Table getCopyList() {
 		return copyList;
 	}
 
-	public java.util.List<RGB> getRgbList() {
+	public List<RGB> getRgbList() {
 		return rgbList;
 	}
 
