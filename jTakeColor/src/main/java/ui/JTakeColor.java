@@ -42,7 +42,7 @@ public class JTakeColor extends ApplicationWindow {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 	    Image image = new Image(shell.getDisplay(),
-		JTakeColor.class.getClassLoader().getResourceAsStream("icons/icon.png"));
+		JTakeColor.class.getClassLoader().getResourceAsStream("icon.png"));
 		shell.setText("JTakeColor");
 		shell.setLocation(100, 100);
 
@@ -98,7 +98,7 @@ public class JTakeColor extends ApplicationWindow {
 				display.getBounds().height);
 		shell.setAlpha(1);
 		Image image = new Image(display, JTakeColor.class.getClassLoader()
-				.getResourceAsStream("icons/icon.png"));
+				.getResourceAsStream("icon.png"));
 		shell.setImage(image);
 		new JTakeColor(shell).run();
 	}
