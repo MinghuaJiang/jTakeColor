@@ -1,5 +1,6 @@
 package util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,7 +8,7 @@ import java.util.Properties;
 
 public class PreferenceUtil {
 	public static final String AMPLIFY = "Amplify";
-	
+
 	private static PreferenceUtil preference = new PreferenceUtil();
 	private Properties ps;
 
@@ -19,20 +20,20 @@ public class PreferenceUtil {
 		return preference;
 	}
 
-	public void load() {
-		try {
-			ps.load(new FileInputStream("takeColor.properties"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void load() throws Exception {
+		File file = new File("takeColor.properties");
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		try (FileInputStream inputStream = new FileInputStream(file)) {
+			ps.load(inputStream);
 		}
 	}
 
-	public void save() {
-		try {
-			ps.store(new FileOutputStream("takeColor.properties"), "");
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void save() throws Exception {
+		try (FileOutputStream outputStream = new FileOutputStream(
+				"takeColor.properties")) {
+			ps.store(outputStream, "");
 		}
 	}
 

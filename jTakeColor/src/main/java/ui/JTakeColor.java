@@ -23,7 +23,11 @@ public class JTakeColor extends ApplicationWindow {
 	public JTakeColor(Shell parent) {
 		super(parent);
 		this.parent = parent;
-		PreferenceUtil.getInstance().load();
+		try {
+			PreferenceUtil.getInstance().load();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		addMenuBar();
 		app = this;
 	}
@@ -41,8 +45,8 @@ public class JTakeColor extends ApplicationWindow {
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-	    Image image = new Image(shell.getDisplay(),
-		JTakeColor.class.getClassLoader().getResourceAsStream("icon.png"));
+		Image image = new Image(shell.getDisplay(), JTakeColor.class
+				.getClassLoader().getResourceAsStream("icon.png"));
 		shell.setText("JTakeColor");
 		shell.setLocation(100, 100);
 
@@ -53,7 +57,11 @@ public class JTakeColor extends ApplicationWindow {
 		shell.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				PreferenceUtil.getInstance().save();
+				try {
+					PreferenceUtil.getInstance().save();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 				parent.dispose();
 			}
 		});
